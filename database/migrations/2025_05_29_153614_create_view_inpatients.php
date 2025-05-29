@@ -18,8 +18,6 @@ class CreateViewInpatients extends Migration
                 p.\"lname\",
                 p.\"sex\",
                 p.\"address\",
-                p.\"dateofbirth\",
-                calculate_age_in_years(p.\"dateofbirth\") AS age,
                 i.\"wardID\",
                 w.\"wardName\",
                 i.\"bedID\",
@@ -30,7 +28,6 @@ class CreateViewInpatients extends Migration
                 i.\"dateAdmittedInWard\",
                 i.\"expectedLeave\",
                 i.\"actualLeave\",
-                days_admitted(i.\"inpatientID\") AS daysAdmitted,
                 CASE
                     WHEN i.\"actualLeave\" IS NOT NULL THEN 'discharged'
                     WHEN i.\"dateAdmittedInWard\" IS NOT NULL THEN 'admitted'
@@ -41,6 +38,7 @@ class CreateViewInpatients extends Migration
             LEFT JOIN wards w ON w.\"wardID\" = i.\"wardID\"
             LEFT JOIN beds b ON b.\"bedID\" = i.\"bedID\"
         ");
+
     }
 
     public function down(): void
