@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Patient;
 use App\Models\Ward;
 use App\Models\Bed;
+use App\Models\ViewInpatient;
 use Illuminate\Validation\Rule;
 use Carbon\Carbon; // Make sure Carbon is imported
 
@@ -14,33 +15,9 @@ class InpatientController extends Controller
 {
     public function index()
     {
-        // Waiting list: inpatients with datePlacedOnWaitlist not null and dateAdmittedInWard null
-        $waitingList = Inpatient::with(['patient', 'ward', 'bed'])
-            ->whereNotNull('datePlacedOnWaitlist')
-            ->whereNull('dateAdmittedInWard')
-            ->orderBy('datePlacedOnWaitlist', 'desc')
-            ->get();
-
-        // Admitted patients: dateAdmittedInWard not null AND actualLeave null (currently admitted)
-        // This is the crucial part. If actualLeave is set, they are no longer "admitted".
-        $admittedPatients = Inpatient::with(['patient', 'ward', 'bed'])
-            ->whereNotNull('dateAdmittedInWard')
-            ->whereNull('actualLeave') // ONLY currently admitted patients
-            // The expectedLeave condition helps for cases where expectedLeave is in the past
-            // but actualLeave is not yet recorded (they are still considered admitted).
-            ->where(function ($query) {
-                $query->where('expectedLeave', '>', now())
-                      ->orWhereNull('expectedLeave'); // If expectedLeave is not set, assume ongoing
-            })
-            ->orderBy('dateAdmittedInWard', 'desc')
-            ->get();
-
-        // Discharged patients: dateAdmittedInWard not null AND actualLeave not null
-        $dischargedPatients = Inpatient::with(['patient', 'ward', 'bed'])
-            ->whereNotNull('dateAdmittedInWard')
-            ->whereNotNull('actualLeave')
-            ->orderBy('actualLeave', 'desc') // Order by actual discharge date
-            ->get();
+        $waitingList = ViewInpatient::where('status', 'waiting')->get();
+        $admittedPatients = ViewInpatient::where('status', 'admitted')->get();
+        $dischargedPatients = ViewInpatient::where('status', 'discharged')->get();
 
         return view('inpatients.index', compact('waitingList', 'admittedPatients', 'dischargedPatients'));
     }

@@ -19,9 +19,9 @@
             </div>
         @endif
 
-        {{-- Waiting List Dropdown --}}
-        <button type="button" onclick="toggleSection('waitingListSection')"
-                class="w-full bg-red-600 text-white font-bold py-3 rounded-md cursor-pointer focus:outline-none">
+        {{-- Waiting List --}}
+        <button onclick="toggleSection('waitingListSection')"
+                class="w-full bg-red-600 text-white font-bold py-3 rounded-md">
             Waiting List ({{ $waitingList->count() }} patients)
         </button>
         <div id="waitingListSection" class="border border-red-300 rounded-md mt-2 p-4 bg-red-50 max-h-[500px] overflow-auto">
@@ -40,18 +40,18 @@
                 <tbody>
                     @forelse ($waitingList as $inpatient)
                         <tr class="even:bg-red-100">
-                            <td class="px-3 py-1">{{ $inpatient->patient->patientID ?? 'N/A' }}</td>
-                            <td class="px-3 py-1">{{ $inpatient->patient->full_name ?? 'N/A' }}</td>
-                            <td class="px-3 py-1">{{ $inpatient->patient->sex ?? 'N/A' }}</td>
-                            <td class="px-3 py-1">{{ $inpatient->patient->address ?? 'N/A' }}</td>
+                            <td class="px-3 py-1">{{ $inpatient->patientID }}</td>
+                            <td class="px-3 py-1">{{ $inpatient->fname }} {{ $inpatient->lname }}</td>
+                            <td class="px-3 py-1">{{ $inpatient->sex }}</td>
+                            <td class="px-3 py-1">{{ $inpatient->address }}</td>
                             <td class="px-3 py-1">{{ $inpatient->wardRequired ?? 'N/A' }}</td>
                             <td class="px-3 py-1">{{ $inpatient->expectedDaysToStay ?? 'N/A' }}</td>
                             <td class="px-3 py-1 text-right space-x-2">
-                                <a href="{{ route('inpatients.admitPatientForm', $inpatient->inpatientID) }}" style="color: green;" class="text-green-700 hover:underline">Admit</a>
+                                <a href="{{ route('inpatients.admitPatientForm', $inpatient->inpatientID) }}" class="text-green-700 hover:underline">Admit</a>
                                 <form action="{{ route('inpatients.destroy', $inpatient->inpatientID) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure?');">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" style="color: red;" class="text-red-700 hover:underline">Delete</button>
+                                    <button type="submit" class="text-red-700 hover:underline">Delete</button>
                                 </form>
                             </td>
                         </tr>
@@ -64,9 +64,9 @@
             </table>
         </div>
 
-        {{-- Admitted Patients Dropdown --}}
-        <button type="button" onclick="toggleSection('admittedPatientsSection')"
-                class="w-full bg-green-600 text-white font-bold py-3 rounded-md cursor-pointer focus:outline-none mt-6">
+        {{-- Admitted Patients --}}
+        <button onclick="toggleSection('admittedPatientsSection')"
+                class="w-full bg-green-600 text-white font-bold py-3 rounded-md mt-6">
             Admitted Patients ({{ $admittedPatients->count() }} patients)
         </button>
         <div id="admittedPatientsSection" class="border border-green-300 rounded-md mt-2 p-4 bg-green-50 max-h-[500px] overflow-auto">
@@ -85,9 +85,9 @@
                 <tbody>
                     @forelse ($admittedPatients as $inpatient)
                         <tr class="even:bg-green-100">
-                            <td class="px-6 py-4">{{ $inpatient->patient->full_name ?? 'N/A' }}</td>
-                            <td class="px-6 py-4">{{ $inpatient->ward->wardName ?? 'N/A' }}</td>
-                            <td class="px-6 py-4">{{ $inpatient->bedID ?? 'None' }}</td>
+                            <td class="px-6 py-4">{{ $inpatient->fname }} {{ $inpatient->lname }}</td>
+                            <td class="px-6 py-4">{{ $inpatient->wardName ?? 'N/A' }}</td>
+                            <td class="px-6 py-4">{{ $inpatient->bedNumber ?? 'None' }}</td>
                             <td class="px-6 py-4">
                                 {{ $inpatient->dateAdmittedInWard ? \Carbon\Carbon::parse($inpatient->dateAdmittedInWard)->format('Y-m-d') : 'N/A' }}
                             </td>
@@ -96,11 +96,11 @@
                                 {{ $inpatient->expectedLeave ? \Carbon\Carbon::parse($inpatient->expectedLeave)->format('Y-m-d') : 'N/A' }}
                             </td>
                             <td class="px-6 py-4 text-right space-x-2">
-                                <a href="{{ route('inpatients.editAdmitted', $inpatient->inpatientID) }}" style="color: blue;" class="text-blue-700 hover:underline">Edit Admitted</a>
-                                <form method="POST" action="{{ route('inpatients.destroy', $inpatient->inpatientID) }}" style="color: red;" class="inline" onsubmit="return confirm('Are you sure you want to delete this inpatient?');">
+                                <a href="{{ route('inpatients.editAdmitted', $inpatient->inpatientID) }}" class="text-blue-700 hover:underline">Edit Admitted</a>
+                                <form method="POST" action="{{ route('inpatients.destroy', $inpatient->inpatientID) }}" class="inline" onsubmit="return confirm('Are you sure you want to delete this inpatient?');">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" style="color: red;" class="text-red-700 hover:underline">Delete</button>
+                                    <button type="submit" class="text-red-700 hover:underline">Delete</button>
                                 </form>
                             </td>
                         </tr>
@@ -113,9 +113,9 @@
             </table>
         </div>
 
-        {{-- Discharged Patients Dropdown --}}
-        <button type="button" onclick="toggleSection('dischargedPatientsSection')"
-                class="w-full bg-blue-600 text-white font-bold py-3 rounded-md cursor-pointer focus:outline-none mt-6">
+        {{-- Discharged Patients --}}
+        <button onclick="toggleSection('dischargedPatientsSection')"
+                class="w-full bg-blue-600 text-white font-bold py-3 rounded-md mt-6">
             Discharged Patients ({{ $dischargedPatients->count() }} patients)
         </button>
         <div id="dischargedPatientsSection" class="border border-blue-300 rounded-md mt-2 p-4 bg-blue-50 max-h-[500px] overflow-auto">
@@ -133,9 +133,9 @@
                 <tbody>
                     @forelse ($dischargedPatients as $inpatient)
                         <tr class="even:bg-blue-100">
-                            <td class="px-6 py-4">{{ $inpatient->patient->full_name ?? 'N/A' }}</td>
-                            <td class="px-6 py-4">{{ $inpatient->ward->wardName ?? 'N/A' }}</td>
-                            <td class="px-6 py-4">{{ $inpatient->bedID ?? 'None' }}</td>
+                            <td class="px-6 py-4">{{ $inpatient->fname }} {{ $inpatient->lname }}</td>
+                            <td class="px-6 py-4">{{ $inpatient->wardName ?? 'N/A' }}</td>
+                            <td class="px-6 py-4">{{ $inpatient->bedNumber ?? 'None' }}</td>
                             <td class="px-6 py-4">
                                 {{ $inpatient->dateAdmittedInWard ? \Carbon\Carbon::parse($inpatient->dateAdmittedInWard)->format('Y-m-d') : 'N/A' }}
                             </td>
@@ -146,7 +146,7 @@
                                 <form method="POST" action="{{ route('inpatients.destroy', $inpatient->inpatientID) }}" class="inline" onsubmit="return confirm('Are you sure you want to delete this discharged inpatient record?');">
                                     @csrf
                                     @method('DELETE')
-                                    <button  type="submit" style="color: red;" class="text-red-700 hover:underline">Delete</button>
+                                    <button type="submit" class="text-red-700 hover:underline">Delete</button>
                                 </form>
                             </td>
                         </tr>
@@ -163,7 +163,6 @@
     <script>
         function toggleSection(id) {
             const section = document.getElementById(id);
-            if (!section) return;
             section.style.display = (section.style.display === 'none' || section.style.display === '') ? 'block' : 'none';
         }
 
